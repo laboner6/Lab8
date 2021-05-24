@@ -102,9 +102,13 @@ describe('Basic user flow for SPA ', () => {
 
   // define and implement test11: Clicking the back button once should bring the user back to the home page
 
-
-  // define and implement test12: When the user if on the homepage, the header title should be “Journal Entries”
-
+  it('Test12: On homepage - checking header <h1> element be "Journal Entries', async() => {
+    // implement test12: When the user if on the homepage, the header title should be “Journal Entries”
+    const realTitle = await page.$eval('header > h1', (title) => {
+      return title.textContent;
+    })
+    expect(realTitle).toBe("Journal Entries");
+  });
 
   // define and implement test13: On the home page the <body> element should not have any class attribute 
 
@@ -118,12 +122,39 @@ describe('Basic user flow for SPA ', () => {
   // define and implement test16: Verify the entry page contents is correct when clicking on the second entry
 
 
-  // create your own test 17
+  it('Test17: Clicking the third entry, new URL should contain #entry6', async () => {
+    // implement test17: Clicking the third entry, new URL should contain #entry6
+    const entries = await page.$$('journal-entry');
+    await entries[2].click();
+    await page.waitForNavigation();
+    expect(page.url().includes('/#entry3')).toBe(true);
+  });
 
-  // create your own test 18
+  it('Test18: Clicking the third entry, new title should be "Entry 3"', async () => {
+    // implement test18: Clicking the third entry, new title should be "Entry 3"
+    const entries = await page.$$('journal-entry');
+    await entries[2].click();
+    await page.waitForNavigation();
+    const realTitle = await page.$eval('header > h1', (title) => {
+      return title.textContent;
+    })
+    expect(realTitle).toBe("Entry 3");
+  });
 
-  // create your own test 19
+  it('Test19: Clicking the fourth entry, the audio should have controls property', async () => {
+    // implement test19: Clicking the fourth entry, the audio should have controls property
+    const entries = await page.$$('journal-entry');
+    await entries[3].click();
+    const realAudioControl = await page.$eval("audio", (audio) => {
+      return audio.controls;
+    })
+    expect(realAudioControl).toBe(true);
+  });
 
-  // create your own test 20
+  it('Test20: Clicking the back button, should bring the user back to the home page', async () => {
+    // implement test20: Clicking the back button, should bring the user back to the home page
+    await page.click(await page.$$('header > h1'));
+    expect(page.url()).toBe('http://127.0.0.1:5500/');
+  });
   
 });
