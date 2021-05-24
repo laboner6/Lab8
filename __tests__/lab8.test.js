@@ -30,12 +30,15 @@ describe('Basic user flow for SPA ', () => {
   it('Test3: Clicking first <journal-entry>, new URL should contain /#entry1', async () => {
     // implement test3: Clicking on the first journal entry should update the URL to contain “/#entry1”
     await page.click('journal-entry');
-    expect(page.url().includes('entry1')).toBe(true);
+    expect(page.url().includes('#entry1')).toBe(true);
   });
 
   it('Test4: On first Entry page - checking page header title', async () => {
     // implement test4: Clicking on the first journal entry should update the header text to “Entry 1” 
-
+    const realTitle = await page.$eval('header > h1', (title) => {
+      return title.textContent;
+    })
+    expect(realTitle).toBe("Entry 1");
   });
 
   it('Test5: On first Entry page - checking <entry-page> contents', async () => {
@@ -51,17 +54,35 @@ describe('Basic user flow for SPA ', () => {
           }
         }
       */
+     const testContent = { 
+      title: 'You like jazz?',
+      date: '4/25/2021',
+      content: "According to all known laws of aviation, there is no way a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway because bees don't care what humans think is impossible.",
+      image: {
+        src: 'https://i1.wp.com/www.thepopcornmuncher.com/wp-content/uploads/2016/11/bee-movie.jpg?resize=800%2C455',
+        alt: 'bee with sunglasses'
+      }
+    };
+
+    const realContent = await page.$eval("entry-page", (entry) => {
+      return entry.entry;
+    })
+    expect(realContent).toEqual(testContent);
 
   }, 10000);
 
   it('Test6: On first Entry page - checking <body> element classes', async () => {
     // implement test6: Clicking on the first journal entry should update the class attribute of <body> to ‘single-entry’
-
+    const bodyClassName = await page.$eval("body", (entry) => {
+      return entry.className;
+    })
+    expect(bodyClassName).toBe("single-entry");
   });
 
   it('Test7: Clicking the settings icon, new URL should contain #settings', async () => {
     // implement test7: Clicking on the settings icon should update the URL to contain “/#settings”
-
+    await page.click('img[alt="settings"]');
+    expect(page.url().includes('#settings')).toBe(true);
   });
 
   it('Test8: On Settings page - checking page header title', async () => {
